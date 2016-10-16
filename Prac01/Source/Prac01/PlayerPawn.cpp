@@ -41,6 +41,22 @@ void APlayerPawn::Tick( float DeltaTime )
     FVector NewLocation = GetActorLocation() + (CurrentVelocity * DeltaTime);
     SetActorLocation(NewLocation);
   }
+  
+  if (IsJump)
+  {
+    JumpVelocity.Z -= DeltaTime * 80.0f;
+    FVector NewLocation = GetActorLocation() + JumpVelocity;
+    
+    const float Floor = 10.0f;
+    
+    if (NewLocation.Z < Floor)
+    {
+      NewLocation.Z = Floor;
+      IsJump = false;
+    }
+    
+    SetActorLocation(NewLocation);
+  }
 }
 
 // Called to bind functionality to input
@@ -51,6 +67,8 @@ void APlayerPawn::SetupPlayerInputComponent(class UInputComponent* InputComponen
   // InputFunctionを紐付けする
   InputComponent->BindAxis("MoveX", this, &APlayerPawn::Move_XAxis);
   InputComponent->BindAxis("MoveY", this, &APlayerPawn::Move_YAxis);
+  
+  InputComponent->BindAction("Jump", IE_Pressed, this, &APlayerPawn::StartJump);
 }
 
 void APlayerPawn::Move_XAxis(float AxisValue)
@@ -63,3 +81,9 @@ void APlayerPawn::Move_YAxis(float AxisValue)
   CurrentVelocity.Y = FMath::Clamp(AxisValue, -1.0f, 1.0f) * 100.0f;
 }
 
+void APlayerPawn::StartJump()
+{
+  if (IsJump) { return; }
+  JumpVelocity = JumpPower;
+  IsJump = true;
+}

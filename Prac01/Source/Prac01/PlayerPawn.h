@@ -28,9 +28,18 @@ public:
 	UPROPERTY(EditAnywhere)
   USceneComponent* VisibleComponent;
   
+  UPROPERTY(EditAnywhere)
+  bool IsJump;
+  
+  UPROPERTY(EditAnywhere)
+  FVector JumpPower;
+  
+  FVector JumpVelocity;
+  
   // Input Functions
   void Move_XAxis(float AxisValue);
   void Move_YAxis(float AxisValue);
+  void StartJump();
   
   // Input Variables
   FVector CurrentVelocity;
